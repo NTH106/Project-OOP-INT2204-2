@@ -5,11 +5,9 @@
 
 2.Nguyễn Thành Đạt 20020520
 
-# Mô tả project phần mềm quản lý cho cửa hàng rau củ quả 
+# Mô tả project Phần mềm quản lý các thiết bị thí nghiệm
 
 Được viết bằng JavaFX 
-
-Phần mềm quản lý các thiết bị thí nghiệm bao gồm 
 
 số lượng 
 
