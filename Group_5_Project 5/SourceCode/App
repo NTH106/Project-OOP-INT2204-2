@@ -1,0 +1,140 @@
+import javafx.application.Application;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.geometry.Insets;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.*;
+import javafx.stage.Stage;
+
+public class App extends Application {
+
+    private ObservableList<ThietBi> thietBiData = FXCollections.observableArrayList();
+
+    private TextField txtTenThietBi;
+    private TextField txtTacDung;
+    private TextField txtSoLuong;
+    private TextField txtViTri;
+    private TextField txtNguoiMuon;
+    private TableView<ThietBi> tblThietBi;
+
+    public static void main(String[] args) {
+        launch(args);
+    }
+
+    @Override
+    public void start(Stage primaryStage) {
+        primaryStage.setTitle("Quản Lý Thiết Bị Thí Nghiệm");
+
+        // Tạo giao diện người dùng
+        BorderPane root = new BorderPane();
+        root.setPadding(new Insets(10));
+
+        // Tạo form nhập thông tin thiết bị
+        VBox formBox = new VBox();
+        formBox.setSpacing(15);
+        formBox.setPadding(new Insets(10));
+
+        txtTenThietBi = new TextField();
+        txtTenThietBi.setPromptText("Tên Thiết Bị");
+        txtTacDung = new TextField();
+        txtTacDung.setPromptText("Tác dụng");
+        txtSoLuong = new TextField();
+        txtSoLuong.setPromptText("Số lượng");
+        txtViTri = new TextField();
+        txtViTri.setPromptText("Vị trí");
+        txtNguoiMuon = new TextField();
+        txtNguoiMuon.setPromptText("Người mượn");
+
+        Button btnThem = new Button(" Thêm Thiết bị ");
+        btnThem.setOnAction(event -> themThietBi());
+
+        Button btnTimKiem = new Button(" Tìm kiếm ");
+        btnTimKiem.setOnAction(event -> timKiemThietBi());
+
+        formBox.getChildren().addAll(txtTenThietBi, txtTacDung, txtSoLuong, txtViTri, txtNguoiMuon, btnThem, btnTimKiem);
+
+        // Tạo nút xóa
+        Button btnXoa = new Button(" Xóa Thiết Bị");
+        btnXoa.setOnAction(event -> xoaThietBi());
+
+        formBox.getChildren().add(btnXoa);
+
+        // Tạo bảng hiển thị danh sách thiết bị
+        tblThietBi = new TableView<>();
+        tblThietBi.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+
+        TableColumn<ThietBi, String> colTenThietBi = new TableColumn<>("Tên thiết bị");
+        colTenThietBi.setCellValueFactory(new PropertyValueFactory<>("tenThietBi"));
+
+        TableColumn<ThietBi, String> colTacDung = new TableColumn<>("Tác dụng");
+        colTacDung.setCellValueFactory(new PropertyValueFactory<>("tacDung"));
+
+        TableColumn<ThietBi, Integer> colSoLuong = new TableColumn<>("Số lượng");
+        colSoLuong.setCellValueFactory(new PropertyValueFactory<>("soLuong"));
+
+        TableColumn<ThietBi, String> colViTri = new TableColumn<>("Vị trí");
+        colViTri.setCellValueFactory(new PropertyValueFactory<>("viTri"));
+        TableColumn<ThietBi, String> colNguoiMuon = new TableColumn<>("Người mượn");
+        colNguoiMuon.setCellValueFactory(new PropertyValueFactory<>("nguoiMuon"));
+    
+        tblThietBi.getColumns().addAll(colTenThietBi, colTacDung, colSoLuong, colViTri, colNguoiMuon);
+    
+        root.setLeft(formBox);
+        root.setCenter(tblThietBi);
+    
+        // Khởi tạo dữ liệu mẫu
+        thietBiData.add(new ThietBi("Ống nghiệm", "pha chế thí nghiệm", 5, "Vị trí 1", "Đạt"));
+        thietBiData.add(new ThietBi("Cốc đong", "Định lượng hóa chất theo thể tích", 3, "Vị trí 2", "Đạt"));
+        thietBiData.add(new ThietBi("Đũa thủy tinh", "dùng để khuấy dung dịch, hóa chất, dung môi", 7, "Vị trí 3", "Trọng"));
+        thietBiData.add(new ThietBi("máy lắc", "trộn/hòa tan mẫu dung dịch", 10, "Vị trí 4", "Đạt"));
+        thietBiData.add(new ThietBi("kính hiển vi", "phóng đại, quan sát , đo lường", 8, "Vị trí 5", "Trọng"));
+      
+        tblThietBi.setItems(thietBiData);
+    
+        // Tạo Scene
+        Scene scene = new Scene(root, 800, 600);
+        primaryStage.setScene(scene);
+        primaryStage.show();
+    }
+    
+    // Phương thức thêm thiết bị
+    private void themThietBi() {
+        String tenThietBi = txtTenThietBi.getText();
+        String tacDung = txtTacDung.getText();
+        int soLuong = Integer.parseInt(txtSoLuong.getText());
+        String viTri = txtViTri.getText();
+        String nguoiMuon = txtNguoiMuon.getText();
+    
+        ThietBi thietBi = new ThietBi(tenThietBi, tacDung, soLuong, viTri, nguoiMuon);
+        thietBiData.add(thietBi);
+    
+        txtTenThietBi.clear();
+        txtTacDung.clear();
+        txtSoLuong.clear();
+        txtViTri.clear();
+        txtNguoiMuon.clear();
+    }
+    
+    // Phương thức tìm kiếm thiết bị
+    private void timKiemThietBi() {
+        String keyword = txtTacDung.getText().toLowerCase();
+        ObservableList<ThietBi> filteredList = FXCollections.observableArrayList();
+    
+        for (ThietBi thietBi : thietBiData) {
+            if (thietBi.getTacDung().toLowerCase().contains(keyword)) {
+                filteredList.add(thietBi);
+            }
+        }
+    
+        tblThietBi.setItems(filteredList);
+    }
+    
+    
+    // Phương thức xóa thiết bị
+    private void xoaThietBi() {
+        ThietBi selectedThietBi = tblThietBi.getSelectionModel().getSelectedItem();
+        tblThietBi.getItems().remove(selectedThietBi);
+    }
+}
